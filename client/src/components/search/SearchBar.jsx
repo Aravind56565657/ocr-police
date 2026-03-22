@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Loader2 } from 'lucide-react';
 import api from '../../services/api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function SearchBar({ initialQuery = '', onSearch }) {
-    const navigate = useNavigate();
     const [query, setQuery] = useState(initialQuery);
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -58,25 +57,23 @@ export default function SearchBar({ initialQuery = '', onSearch }) {
             {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute top-16 left-0 right-0 bg-slate-900 border border-slate-700 rounded-lg shadow-xl z-50 overflow-hidden animate-slide-up">
                     <div className="px-4 py-2 text-xs font-semibold text-slate-500 bg-slate-800/50 uppercase tracking-wider">
-                        Quick Jump Suggestions
+                        Suggestions
                     </div>
                     <ul className="divide-y divide-slate-800">
                         {suggestions.map((s, i) => (
                             <li key={i}>
                                 <button
                                     className="w-full text-left px-4 py-3 hover:bg-slate-800 text-slate-300 transition-colors flex items-center gap-3"
-                                    onClick={() => {
-                                        setQuery(s.text || s);
+                                    onMouseDown={(e) => {
+                                        // Prevents input onBlur from firing immediately
+                                        e.preventDefault();
+                                        setQuery(s);
                                         setShowSuggestions(false);
-                                        if (s.id) {
-                                            navigate(`/records/${s.id}`);
-                                        } else if (onSearch) {
-                                            onSearch(s.text || s);
-                                        }
+                                        if (onSearch) onSearch(s);
                                     }}
                                 >
                                     <Search className="w-4 h-4 text-slate-500" />
-                                    {s.text || s}
+                                    {s}
                                 </button>
                             </li>
                         ))}

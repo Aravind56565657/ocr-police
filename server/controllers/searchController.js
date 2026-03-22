@@ -79,18 +79,17 @@ exports.getSuggestions = async (req, res) => {
                 { 'officerDetails.name.value': regex },
                 { 'caseDetails.caseNumber.value': regex }
             ]
-        }).limit(8).select('_id officerDetails.name.value caseDetails.caseNumber.value');
+        }).limit(8).select('officerDetails.name.value caseDetails.caseNumber.value -_id');
 
-        const suggestionMap = new Map();
+        const suggestions = new Set();
         records.forEach(r => {
             const name = r.officerDetails?.name?.value;
             const caseNum = r.caseDetails?.caseNumber?.value;
-            const id = r._id.toString();
-            if (name && regex.test(name) && !suggestionMap.has(name)) suggestionMap.set(name, { text: name, id });
-            if (caseNum && regex.test(caseNum) && !suggestionMap.has(caseNum)) suggestionMap.set(caseNum, { text: caseNum, id });
+            if (name && regex.test(name)) suggestions.add(name);
+            if (caseNum && regex.test(caseNum)) suggestions.add(caseNum);
         });
 
-        return res.json(success('Suggestions loaded', { suggestions: Array.from(suggestionMap.values()) }));
+        return res.json(success('Suggestions loaded', { suggestions: Array.from(suggestions) }));
     } catch (err) {
         return res.status(500).json(failure('Error getting suggestions', err));
     }
