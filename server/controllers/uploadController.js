@@ -103,4 +103,75 @@ async function getStatus(req, res) {
     }
 }
 
-module.exports = { uploadAndProcess, getStatus };
+async function reprocessDocument(req, res) {
+    try {
+        const record = await Record.findById(req.params.id);
+        if (!record) return res.status(404).json(failure('Record not found'));
+
+        // Update status indicating processing started again
+        await Record.findByIdAndUpdate(record._id, { processingStatus: 'ocr_processing' });
+
+        const filePath = path.join(__dirname, '..', record.originalFileUrl.replace(/\//g, path.sep));
+
+        let combinedRawText = '';
+        let combinedLanguages = [];
+        let minConfidence = 1.0;
+        let allLowConfWords = [];
+
+        if (record.fileType === 'pdf' || record.originalFileUrl.toLowerCase().endsWith('.pdf')) {
+            const fs = require('fs');
+            const pdfParse = require('pdf-parse');
+            try {
+                const dataBuffer = fs.readFileSync(filePath);
+                const pdfData = await pdfParse(dataBuffer);
+                combinedRawText = pdfData.text || 'No parseable text found in PDF';
+                minConfidence = 0.95;
+            } catch (pdfErr) {
+                console.warn('[PDF Parse Error]', pdfErr.message);
+                combinedRawText = 'Error extracting text from PDF. Document might be corrupted or entirely scanned images.';
+                minConfidence = 0.50;
+            }
+            combinedLanguages = [{ languageCode: 'en', languageName: 'English', confidence: 0.95 }];
+        } else {
+            const ocrResult = await extractTextFromImage(filePath);
+            combinedRawText = ocrResult.rawText;
+            combinedLanguages = ocrResult.detectedLanguages;
+            allLowConfWords = ocrResult.lowConfidenceWords;
+            minConfidence = ocrResult.overallOCRConfidence;
+        }
+
+        // Update record with OCR data directly
+        await Record.findByIdAndUpdate(record._id, {
+            rawExtractedText: combinedRawText.trim(),
+            detectedLanguages: combinedLanguages,
+            overallOCRConfidence: minConfidence,
+            lowConfidenceWords: allLowConfWords.slice(0, 50),
+            processingStatus: 'extracting',
+        });
+
+        // Gemini structured extraction
+        const { extracted, lowConfidenceFields, requiresManualReview } =
+            await extractStructuredData(combinedRawText.trim());
+
+        // Save complete record overwrite
+        const finalRecord = await Record.findByIdAndUpdate(record._id, {
+            officerDetails: extracted.officerDetails,
+            caseDetails: extracted.caseDetails,
+            documentType: extracted.documentType,
+            searchTags: extracted.searchTags,
+            requiresManualReview,
+            processingStatus: 'complete',
+        }, { new: true });
+
+        return res.json(success('Document reprocessed successfully', { record: finalRecord }));
+    } catch (err) {
+        await Record.findByIdAndUpdate(req.params.id, {
+            processingStatus: 'failed',
+            errorMessage: err.message
+        });
+        console.error('[Reprocess Error]', err);
+        return res.status(500).json(failure('Reprocessing failed: ' + err.message));
+    }
+}
+
+module.exports = { uploadAndProcess, getStatus, reprocessDocument };
