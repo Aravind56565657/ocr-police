@@ -4,7 +4,7 @@ const path = require('path');
 
 // Initialize with keyFilename (credentials json)
 const client = new vision.ImageAnnotatorClient({
-    keyFilename: path.join(__dirname, '../config/google-credentials.json')
+    keyFilename: 'E:\\lunar-standard-461416-s6-ed07d40b9718.json'
 });
 
 async function extractTextFromImage(imagePath) {

@@ -48,16 +48,13 @@ export default function Records() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <select
+                    <input
+                        type="text"
+                        placeholder="Filter by Document Type..."
                         value={documentType}
                         onChange={(e) => setDocumentType(e.target.value)}
                         className="bg-slate-900 border border-slate-700 text-white text-sm rounded px-3 py-2 outline-none focus:ring-1 focus:ring-navy-500 shadow-card"
-                    >
-                        <option value="">All Types</option>
-                        <option value="FIR">FIR</option>
-                        <option value="Case Report">Case Report</option>
-                        <option value="Incident Report">Incident Report</option>
-                    </select>
+                    />
 
                     <div className="flex items-center bg-slate-900 border border-slate-700 rounded p-1 shadow-card">
                         <button

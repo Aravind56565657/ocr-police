@@ -17,7 +17,7 @@ Instructions:
 1. Extract every identifiable piece of information from the text.
 2. For each field, assign a confidence value from 0.0 (very uncertain) to 1.0 (completely certain).
 3. If a field is not found in the text, set its value to null and confidence to 0.
-4. Detect the document type from: FIR, Case Report, Officer Record, Incident Report, Duty Roster, Complaint, Witness Statement, Other.
+4. Analyze the following document text and classify it into the most appropriate category. Do not restrict yourself to predefined labels. Return only a short, meaningful category name (1-3 words).
 5. Generate a flat array of searchTags — all important keywords, names, numbers, and locations that should be indexed for search.
 6. The response MUST be valid JSON only — no markdown, no explanation, no preamble.
 
@@ -85,4 +85,21 @@ async function extractStructuredData(rawText) {
     }
 }
 
-module.exports = { extractStructuredData };
+async function translateText(text, targetLanguage) {
+    if (!text) return '';
+    try {
+        const prompt = `Translate the following text into ${targetLanguage}.
+Preserve the original meaning and structure.
+Return only translated text. No explanations.
+
+Text:
+${text}`;
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        const result = await model.generateContent(prompt);
+        return result.response.text().trim();
+    } catch (err) {
+        throw new Error(`Gemini translation failed: ${err.message}`);
+    }
+}
+
+module.exports = { extractStructuredData, translateText };

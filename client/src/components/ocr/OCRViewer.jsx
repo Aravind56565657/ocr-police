@@ -4,8 +4,14 @@ import { ZoomIn, ZoomOut, Maximize, FileText } from 'lucide-react';
 export default function OCRViewer({ fileUrl, fileType }) {
     const [scale, setScale] = useState(1);
 
+<<<<<<< HEAD
     const isPdfUrl = fileUrl?.toLowerCase().endsWith('.pdf') || fileType?.toLowerCase() === 'pdf';
     const displayUrl = fileUrl ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}/${fileUrl.replace(/\\/g, '/')}` : '';
+=======
+    const isPdfUrl = fileUrl?.toLowerCase().endsWith('.pdf');
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const displayUrl = fileUrl ? `${baseUrl.replace('/api', '')}/${fileUrl.replace(/\\/g, '/')}` : '';
+>>>>>>> pr-1
 
     return (
         <div className="relative flex flex-col h-full bg-slate-950/50 rounded-lg overflow-hidden">

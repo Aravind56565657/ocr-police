@@ -50,7 +50,6 @@ const RecordSchema = new mongoose.Schema({
     // === DOCUMENT CLASSIFICATION ===
     documentType: {
         type: String,
-        enum: ['FIR', 'Case Report', 'Officer Record', 'Incident Report', 'Duty Roster', 'Complaint', 'Witness Statement', 'Other'],
         default: 'Other'
     },
 
@@ -58,7 +57,6 @@ const RecordSchema = new mongoose.Schema({
     processingStatus: {
         type: String,
         enum: ['uploaded', 'ocr_processing', 'ocr_complete', 'extracting', 'complete', 'failed'],
-        default: 'uploaded'
     },
     errorMessage: { type: String },
 
