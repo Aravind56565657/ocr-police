@@ -192,7 +192,6 @@ export default function RecordView() {
             {/* Main Content - 2 Columns (50/50) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 min-h-0">
 
-<<<<<<< HEAD
                 {/* Left: Original Document */}
                 <div className="bg-slate-900 border border-slate-800 rounded-xl flex flex-col shadow-xl h-[calc(100vh-14rem)] overflow-hidden">
                     <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/95 backdrop-blur z-10">
@@ -201,13 +200,6 @@ export default function RecordView() {
                             Original Document
                         </h2>
                         <Badge variant="secondary" className="uppercase">{record.fileType}</Badge>
-=======
-                {/* Left Panel: Original Document */}
-                <div className="h-[800px] lg:h-full lg:col-span-1 shadow-card rounded-lg border border-slate-800 flex flex-col bg-slate-900 overflow-hidden">
-                    <div className="bg-slate-800/80 p-3 border-b border-slate-800 flex justify-between items-center z-10">
-                        <h2 className="text-sm font-medium text-white px-2">Original Document</h2>
-                        <Badge variant="default" className="text-[10px]">{record.fileType?.toUpperCase() || 'UNKNOWN'}</Badge>
->>>>>>> pr-1
                     </div>
                     <div className="flex-1 bg-black/40 relative overflow-hidden">
                         <OCRViewer fileUrl={record.originalFileUrl} fileType={record.fileType} />
@@ -241,7 +233,6 @@ export default function RecordView() {
                         </button>
                     </div>
 
-<<<<<<< HEAD
                     {/* Tab Content Display */}
                     <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
 
@@ -365,17 +356,6 @@ export default function RecordView() {
                                             <p className="text-sm cursor-default">No raw text was able to be extracted from this document.</p>
                                         </div>
                                     )}
-=======
-                    <div className="p-6 space-y-8">
-                        <section>
-                            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span className="w-6 border-t border-slate-700"></span> Document Info
-                            </h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-xs text-slate-400 font-medium tracking-wide">Document Type</label>
-                                    <EditableField value={record.documentType} fieldPath="documentType" recordId={record._id} fieldType="text" />
->>>>>>> pr-1
                                 </div>
                             </div>
                         )}
