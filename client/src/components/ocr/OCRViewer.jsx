@@ -6,7 +6,8 @@ export default function OCRViewer({ fileUrl, fileType }) {
     const [page, setPage] = useState(1);
 
     const isPdfUrl = fileUrl?.toLowerCase().endsWith('.pdf');
-    const displayUrl = fileUrl ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}/${fileUrl.replace(/\\/g, '/')}` : '';
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const displayUrl = fileUrl ? `${baseUrl.replace('/api', '')}/${fileUrl.replace(/\\/g, '/')}` : '';
 
     return (
         <div className="relative flex flex-col h-full bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
