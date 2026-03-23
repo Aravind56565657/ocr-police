@@ -112,3 +112,15 @@ exports.getRawText = async (req, res) => {
         return res.status(500).json(failure('Error reading record', err));
     }
 };
+
+exports.translateRecord = async (req, res) => {
+    try {
+        const { text, targetLanguage } = req.body;
+        if (!text || !targetLanguage) return res.status(400).json(failure('Text and target language are required'));
+        const { translateText } = require('../services/geminiService');
+        const translation = await translateText(text, targetLanguage);
+        return res.json(success('Translation successful', { translation }));
+    } catch (err) {
+        return res.status(500).json(failure('Error translating text', err.message));
+    }
+};

@@ -81,7 +81,7 @@ export default function RecordView() {
                 <div className="h-[800px] lg:h-full lg:col-span-1 shadow-card rounded-lg border border-slate-800 flex flex-col bg-slate-900 overflow-hidden">
                     <div className="bg-slate-800/80 p-3 border-b border-slate-800 flex justify-between items-center z-10">
                         <h2 className="text-sm font-medium text-white px-2">Original Document</h2>
-                        <Badge variant="default" className="text-[10px]">{record.fileType.toUpperCase()}</Badge>
+                        <Badge variant="default" className="text-[10px]">{record.fileType?.toUpperCase() || 'UNKNOWN'}</Badge>
                     </div>
                     <div className="flex-1 min-h-0 relative">
                         <OCRViewer fileUrl={record.originalFileUrl} fileType={record.fileType} />
@@ -106,7 +106,7 @@ export default function RecordView() {
                             <div className="space-y-4">
                                 <div>
                                     <label className="text-xs text-slate-400 font-medium tracking-wide">Document Type</label>
-                                    <EditableField value={record.documentType} fieldPath="documentType" recordId={record._id} fieldType="select" options={['FIR', 'Case Report', 'Officer Record', 'Incident Report', 'Duty Roster', 'Complaint', 'Witness Statement', 'Other']} />
+                                    <EditableField value={record.documentType} fieldPath="documentType" recordId={record._id} fieldType="text" />
                                 </div>
                             </div>
                         </section>
