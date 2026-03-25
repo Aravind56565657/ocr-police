@@ -71,4 +71,27 @@ cd client
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`.
+---
+
+## ☁️ Deployment Guide
+
+### 1. Backend (Render)
+1. **Create a Request**: On [Render](https://render.com), create a new **Web Service**.
+2. **Connect Repository**: Point to your GitHub repo.
+3. **Environment**: Choose **Docker** as the runtime.
+4. **Environment Variables**:
+   - `MONGODB_URI`: Your Atlas connection string.
+   - `GEMINI_API_KEY`: Your Gemini API key.
+   - `GOOGLE_APPLICATION_CREDENTIALS`: Set this to `./config/google-credentials.json` (ensure the file is uploaded or use a secret).
+   - `NODE_ENV`: `production`
+5. **Disk (Recommended)**: For persistent uploads, attach a Disk to `/app/uploads`.
+
+### 2. Frontend (Vercel)
+1. **Create Project**: On [Vercel](https://vercel.com), import your repository.
+2. **Framework Preset**: Choose **Vite**.
+3. **Root Directory**: Select `client`.
+4. **Environment Variables**:
+   - `VITE_API_BASE_URL`: The URL of your Render service (e.g., `https://your-app.onrender.com/api`).
+5. **Deploy**: Vercel will automatically build and serve your SPA.
+
+The application is configured with `vercel.json` for SPA routing and a `Dockerfile` for OS-level image dependencies.

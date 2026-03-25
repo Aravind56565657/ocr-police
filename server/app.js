@@ -20,14 +20,23 @@ app.use(helmet({
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use('/api', limiter);
 
-// CORS
+// CORS - Allow all origins in development, specific in production
+const origin = process.env.NODE_ENV === 'production'
+    ? true // Allow any origin in production or set specifically
+    : 'http://localhost:5173';
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production'
-        ? 'https://your-production-domain.com'
-        : 'http://localhost:5173',
+    origin: origin,
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Ensure upload directory exists
+const fs = require('fs');
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('dev'));
