@@ -35,3 +35,9 @@ dist-ssr/
 # Google Cloud Keys
 *credentials*.json
 server/config/*.json
+
+# Uploads and Temp Files
+server/uploads/*
+!server/uploads/.gitkeep
+pr1_diff.txt
+pr1_recordview.jsx

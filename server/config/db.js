@@ -6,14 +6,20 @@ const connectDB = async () => {
             console.warn('[Warning] MONGODB_URI is not set or uses placeholder. Db connection skipped.');
             return;
         }
+        const isAtlas = process.env.MONGODB_URI.includes('atlas') || process.env.MONGODB_URI.includes('mongodb+srv');
+
         // Disable command buffering so queries fail fast if the connection drops
         mongoose.set('bufferCommands', false);
 
         await mongoose.connect(process.env.MONGODB_URI, {
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-            socketTimeoutMS: 45000,         // Close sockets after 45s of inactivity
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            // Optimized for Atlas
+            retryWrites: true,
+            autoIndex: process.env.NODE_ENV !== 'production'
         });
-        console.log('MongoDB Connected');
+
+        console.log(`MongoDB Connected (${isAtlas ? 'Atlas cluster' : 'Local instance'})`);
     } catch (err) {
         console.error('MongoDB connection error:', err);
         process.exit(1);

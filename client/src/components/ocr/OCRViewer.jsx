@@ -39,7 +39,7 @@ export default function OCRViewer({ fileUrl, fileType }) {
                 </div>
             )}
 
-            <div className={`flex-1 flex items-center justify-center ${!isPdfUrl ? 'overflow-auto p-4' : 'overflow-hidden'}`}>
+            <div className={`flex-1 flex items-center justify-center custom-scrollbar ${!isPdfUrl ? 'overflow-auto p-8' : 'overflow-hidden'}`}>
                 {displayUrl ? (
                     isPdfUrl ? (
                         <iframe
@@ -55,7 +55,7 @@ export default function OCRViewer({ fileUrl, fileType }) {
                             <img
                                 src={displayUrl}
                                 alt="Document"
-                                className="max-w-full max-h-[calc(100vh-18rem)] object-contain shadow-2xl rounded"
+                                className="object-contain shadow-2xl rounded"
                                 draggable={false}
                             />
                         </div>

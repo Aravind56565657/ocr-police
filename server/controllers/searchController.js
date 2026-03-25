@@ -17,8 +17,12 @@ exports.searchRecords = async (req, res) => {
         let total = 0;
 
         const uri = process.env.MONGODB_URI || '';
-        if (uri.includes('atlas') && false) { // Set to false to force Regex until user sets Atlas Index
+        const isAtlas = uri.includes('atlas') || uri.includes('mongodb+srv');
+
+        if (isAtlas) {
             try {
+                // We perform the Atlas Search aggregation if an Atlas cluster is detected.
+                // Note: user must create a search index named 'default' in Atlas to use this.
                 results = await Record.aggregate([
                     {
                         $search: {
@@ -37,7 +41,7 @@ exports.searchRecords = async (req, res) => {
                 ]);
                 total = results.length; // Approximate without extra count aggregation
             } catch (e) {
-                console.warn("Atlas search failed, falling back to regex", e);
+                console.warn("Atlas search failed (index might not exist yet), falling back to regex", e.message);
             }
         }
 

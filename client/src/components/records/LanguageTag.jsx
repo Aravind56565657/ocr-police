@@ -18,12 +18,13 @@ export default function LanguageTag({ languageName, confidence, className }) {
 
     return (
         <span className={clsx(
-            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border",
+            "inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.1em] border transition-all duration-300 hover:scale-105",
             colorClass,
             className
         )}>
+            <div className={clsx("w-1 h-1 rounded-full", colorClass.split(' ')[1].replace('text-', 'bg-'))} />
             {languageName}
-            {confidence && <span className="opacity-60 text-[10px]">{Math.round(confidence * 100)}%</span>}
+            {confidence && <span className="opacity-40 text-[8px] ml-1">{Math.round(confidence * 100)}%</span>}
         </span>
     );
 }
