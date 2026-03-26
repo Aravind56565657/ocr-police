@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ZoomIn, ZoomOut, Maximize, FileText } from 'lucide-react';
 
-export default function OCRViewer({ fileUrl, fileType }) {
+export default function OCRViewer({ fileUrl, fileType, thumbnailUrl }) {
     const [scale, setScale] = useState(1);
 
     const getDisplayUrl = () => {
@@ -60,10 +60,15 @@ export default function OCRViewer({ fileUrl, fileType }) {
                             style={{ transform: `scale(${scale})` }}
                         >
                             <img
-                                src={displayUrl}
+                                src={thumbnailUrl || displayUrl}
                                 alt="Document"
                                 className="object-contain shadow-2xl rounded"
                                 draggable={false}
+                                onError={(e) => {
+                                    if (thumbnailUrl && e.target.src !== thumbnailUrl) {
+                                        e.target.src = thumbnailUrl;
+                                    }
+                                }}
                             />
                         </div>
                     )

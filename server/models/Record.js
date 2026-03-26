@@ -6,6 +6,7 @@ const RecordSchema = new mongoose.Schema({
     originalFileName: { type: String, required: true },
     fileType: { type: String, enum: ['image', 'pdf', 'scan'], required: true },
     originalFileUrl: { type: String }, // path or GCS URL
+    thumbnailUrl: { type: String },    // optimized base64 or CDN URL
     uploadedAt: { type: Date, default: Date.now },
 
     // === OCR RAW DATA ===

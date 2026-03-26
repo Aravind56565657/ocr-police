@@ -1,10 +1,34 @@
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
 const { extractTextFromImage } = require('../services/visionService');
 const { extractStructuredData } = require('../services/geminiService');
 const { convertPdfToImages } = require('../utils/pdfToImage');
 const Record = require('../models/Record');
 const { success, failure } = require('../utils/responseBuilder');
+
+/**
+ * Generates an optimized base64 thumbnail for a given image file.
+ */
+async function generateThumbnail(filePath) {
+    try {
+        if (!fs.existsSync(filePath)) return null;
+        
+        // Skip for PDF for now (requires complex converter logic)
+        if (filePath.toLowerCase().endsWith('.pdf')) return null;
+
+        const buffer = await sharp(filePath)
+            .resize({ width: 1000, withoutEnlargement: true }) // optimized width
+            .jpeg({ quality: 60, progressive: true })         // aggressive compression
+            .toBuffer();
+        
+        return `data:image/jpeg;base64,${buffer.toString('base64')}`;
+    } catch (err) {
+        console.warn('[Thumbnail Error]', err.message);
+        return null;
+    }
+}
 
 async function uploadAndProcess(req, res) {
     if (!req.file) return res.status(400).json(failure('No file uploaded'));
@@ -13,12 +37,16 @@ async function uploadAndProcess(req, res) {
     let record;
 
     try {
+        // Generate persistent thumbnail if image
+        const thumbnailUrl = await generateThumbnail(req.file.path);
+
         // Step 1: Initialize record in DB as "uploaded"
         record = await Record.create({
             uploadId,
             originalFileName: req.file.originalname,
             fileType: req.file.mimetype.includes('pdf') ? 'pdf' : 'image',
             originalFileUrl: `uploads/${req.file.filename}`,
+            thumbnailUrl,
             processingStatus: 'ocr_processing',
             rawExtractedText: '',
         });
@@ -140,8 +168,12 @@ async function reprocessDocument(req, res) {
             minConfidence = ocrResult.overallOCRConfidence;
         }
 
-        // Update record with OCR data directly
+        // Generate persistent thumbnail if image
+        const thumbnailUrl = await generateThumbnail(filePath);
+
+        // Update record with OCR data and thumbnail directly
         await Record.findByIdAndUpdate(record._id, {
+            thumbnailUrl,
             rawExtractedText: combinedRawText.trim(),
             detectedLanguages: combinedLanguages,
             overallOCRConfidence: minConfidence,

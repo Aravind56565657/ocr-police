@@ -200,7 +200,11 @@ export default function RecordView() {
                         <Badge variant="secondary" className="uppercase text-[9px] font-black tracking-widest bg-slate-800/80 border-slate-700/50">{record.fileType}</Badge>
                     </div>
                     <div className="flex-1 bg-black/60 relative overflow-hidden group-hover:bg-black/40 transition-colors">
-                        <OCRViewer fileUrl={record.originalFileUrl} fileType={record.fileType} />
+                        <OCRViewer 
+                            fileUrl={record.originalFileUrl} 
+                            fileType={record.fileType} 
+                            thumbnailUrl={record.thumbnailUrl}
+                        />
                     </div>
                 </div>
 
