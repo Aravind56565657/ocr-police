@@ -27,8 +27,10 @@ const origin = process.env.NODE_ENV === 'production'
 
 app.use(cors({
     origin: origin,
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Content-Disposition'],
+    credentials: true
 }));
 
 // Ensure upload directory exists

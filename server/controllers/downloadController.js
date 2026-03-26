@@ -15,7 +15,8 @@ exports.downloadText = async (req, res) => {
             res.setHeader('Content-Type', 'text/plain; charset=utf-8');
             res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
             res.write(Buffer.from('\uFEFF', 'utf-8')); 
-            return res.send(`Font: ${selected_font}\n\n${safeText}`);
+            res.write(`Font: ${selected_font}\n\n${safeText}`);
+            return res.end();
         } 
         else if (selected_format === 'pdf') {
             let browser;
