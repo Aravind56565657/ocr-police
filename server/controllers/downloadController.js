@@ -14,14 +14,15 @@ exports.downloadText = async (req, res) => {
         if (selected_format === 'txt') {
             res.setHeader('Content-Type', 'text/plain; charset=utf-8');
             res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-            res.write(Buffer.from('\\uFEFF', 'utf-8')); 
-            return res.send(`Font: ${selected_font}\\n\\n${safeText}`);
+            res.write(Buffer.from('\uFEFF', 'utf-8')); 
+            return res.send(`Font: ${selected_font}\n\n${safeText}`);
         } 
         else if (selected_format === 'pdf') {
             let browser;
             try {
                 browser = await puppeteer.launch({
-                    headless: "new"
+                    headless: "new",
+                    args: ['--no-sandbox', '--disable-setuid-sandbox']
                 });
                 const page = await browser.newPage();
                 
@@ -74,12 +75,12 @@ exports.downloadText = async (req, res) => {
         }
         else if (selected_format === 'docx') {
             let docxFont = selected_font;
-            if (/[\\u0C00-\\u0C7F]/.test(safeText)) docxFont = 'Noto Sans Telugu';
-            else if (/[\\u0900-\\u097F]/.test(safeText)) docxFont = 'Noto Sans Devanagari';
-            else if (/[\\u0B80-\\u0BFF]/.test(safeText)) docxFont = 'Noto Sans Tamil';
-            else if (/[^\\x00-\\x7F]/.test(safeText)) docxFont = 'Noto Sans';
+            if (/[\u0C00-\u0C7F]/.test(safeText)) docxFont = 'Noto Sans Telugu';
+            else if (/[\u0900-\u097F]/.test(safeText)) docxFont = 'Noto Sans Devanagari';
+            else if (/[\u0B80-\u0BFF]/.test(safeText)) docxFont = 'Noto Sans Tamil';
+            else if (/[^\x00-\x7F]/.test(safeText)) docxFont = 'Noto Sans';
 
-            const paragraphs = safeText.split('\\n').map(line => 
+            const paragraphs = safeText.split('\n').map(line => 
                 new Paragraph({
                     children: [new TextRun({ text: line, font: docxFont })]
                 })

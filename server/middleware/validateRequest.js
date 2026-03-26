@@ -6,7 +6,7 @@ exports.validateFieldUpdate = (req, res, next) => {
         return res.status(400).json(failure('fieldPath is required'));
     }
 
-    const allowedPrefixes = ['officerDetails.', 'caseDetails.', 'documentType', 'processingStatus'];
+    const allowedPrefixes = ['officerDetails.', 'caseDetails.', 'documentType', 'processingStatus', 'rawExtractedText'];
     const isValid = allowedPrefixes.some(prefix => fieldPath.startsWith(prefix) || fieldPath === prefix);
 
     if (!isValid) {
